@@ -1,7 +1,9 @@
-angular.module('SimpleRESTIonic.services', [])
+'use strict';
+
+angular.module('RTPoll.services', [])
 
     .service('APIInterceptor', function ($rootScope, $q) {
-        var service = this;
+        let service = this;
 
         service.responseError = function (response) {
             if (response.status === 401) {
@@ -11,10 +13,14 @@ angular.module('SimpleRESTIonic.services', [])
         };
     })
 
-    .service('ItemsModel', function ($http, Backand) {
-        var service = this,
+    .service('QuestionsModel', function ($http, Backand) {
+        let service = this,
             baseUrl = '/1/objects/',
-            objectName = 'items/';
+            objectName = 'questions/';
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
 
         function getUrl() {
             return Backand.getApiUrl() + baseUrl + objectName;
@@ -25,8 +31,10 @@ angular.module('SimpleRESTIonic.services', [])
         };
 
         service.fetch = function (id) {
-            console.debug('item fetch');
-            return $http.get(getUrlForId(id));
+            console.debug('calling fetch');
+            let object = $http.get(getUrlForId(id));
+            console.debug('O:', object);
+            return object;
         };
 
         service.create = function (object) {
@@ -43,7 +51,7 @@ angular.module('SimpleRESTIonic.services', [])
     })
 
     .service('SessionsModel', function ($http, Backand) {
-        var service = this,
+        let service = this,
             baseUrl = '/1/objects/',
             objectName = 'sessions/';
 
@@ -61,7 +69,7 @@ angular.module('SimpleRESTIonic.services', [])
 
         service.fetch = function (id) {
             console.debug('calling fetch');
-            var object = $http.get(getUrlForId(id));
+            let object = $http.get(getUrlForId(id));
             console.debug('O:', object);
             return object;
         };
@@ -80,7 +88,7 @@ angular.module('SimpleRESTIonic.services', [])
     })
 
     .service('LoginService', function (Backand) {
-        var service = this;
+        let service = this;
 
         service.signin = function (email, password, appName) {
             //call Backand for sign in

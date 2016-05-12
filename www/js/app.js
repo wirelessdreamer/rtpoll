@@ -1,9 +1,6 @@
-// Ionic template App
+'use strict';
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'SimpleRESTIonic' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('SimpleRESTIonic', ['ionic', 'backand', 'SimpleRESTIonic.controllers', 'SimpleRESTIonic.services'])
+angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.services'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -34,21 +31,13 @@ angular.module('SimpleRESTIonic', ['ionic', 'backand', 'SimpleRESTIonic.controll
                 templateUrl: 'templates/menu.html',
                 controller: 'LoginCtrl as login'
               })
-            .state('app.search', {
-                url: '/search',
-                views: {
-                  'menuContent': {
-                    templateUrl: 'templates/search.html'
-                  }
-                }
-              })
 
             .state('app.sessions', {
               url: '/sessions',
               views: {
                 'menuContent': {
                   templateUrl: 'templates/sessions.html',
-                  controller: 'SessionCtrl as vm'
+                  controller: 'SessionCtrl as session'
                 }
               }
             })
@@ -58,7 +47,7 @@ angular.module('SimpleRESTIonic', ['ionic', 'backand', 'SimpleRESTIonic.controll
               views: {
                 'menuContent': {
                   templateUrl: 'templates/add-session.html',
-                  controller: 'SessionCtrl as vm'
+                  controller: 'SessionCtrl as session'
                 }
               }
             })
@@ -73,15 +62,15 @@ angular.module('SimpleRESTIonic', ['ionic', 'backand', 'SimpleRESTIonic.controll
               }
             })
 
-            // .state('app.session', {
-            //   url: '/session/:id',
-            //   views: {
-            //     'menuContent': {
-            //       templateUrl: 'templates/questions.html',
-            //       controller: 'SessionCtrl as vm'
-            //     }
-            //   }
-            // })
+            .state('app.questions', {
+              url: '/questions/:session_id',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/questions.html',
+                  controller: 'QuestionCtrl as question'
+                }
+              }
+            })
 
             .state('app.login', {
               url: '/login',

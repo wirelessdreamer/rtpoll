@@ -1,7 +1,8 @@
-angular.module('SimpleRESTIonic.controllers', [])
+'use strict';
 
+angular.module('RTPoll.controllers', [])
     .controller('LoginCtrl', function (Backand, $state, $rootScope, LoginService, $ionicPopup, $ionicHistory) {
-        var login = this;
+        let login = this;
         login.user = 'Anonymous';
 
         function handleLoginSuccess(user){
@@ -47,7 +48,7 @@ angular.module('SimpleRESTIonic.controllers', [])
             console.debug('signout');
             LoginService.signout()
                 .then(function () {
-                    var alertPopup = $ionicPopup.alert({
+                    let alertPopup = $ionicPopup.alert({
                         title: 'Logged out',
                         template: 'User: ' + login.user
                     });
@@ -69,7 +70,7 @@ angular.module('SimpleRESTIonic.controllers', [])
     })    
 
     .controller('EditCtrl', function (SessionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
-        var edit = this;
+        let edit = this;
         edit.id = $stateParams.id;
         edit.session = {};
 
@@ -77,6 +78,7 @@ angular.module('SimpleRESTIonic.controllers', [])
             SessionsModel.fetch(id)
                 .then(function (result) {
                     edit.session = result;
+                    console.debug('r:', result);
                 });
         }
 
@@ -97,7 +99,7 @@ angular.module('SimpleRESTIonic.controllers', [])
     })
 
     .controller('SessionCtrl', function (SessionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
-        var vm = this;
+        let session = this;
 
         $scope.$on("$ionicView.enter", function () {
             getAll();
@@ -107,7 +109,7 @@ angular.module('SimpleRESTIonic.controllers', [])
             console.debug('updating session list');
             getData()
                 .then(function (result) {
-                    vm.data = result.data.data;
+                    session.data = result.data.data;
                     $scope.$broadcast('scroll.refreshComplete');
                 });;
         }
@@ -127,9 +129,6 @@ angular.module('SimpleRESTIonic.controllers', [])
         Backand.on('sessions_created', function (data) {
             getAll();
         });
-        function goToBackand() {
-            window.location = 'http://docs.backand.com';
-        }
    
         function getData(){
             // When we need to do actions after our get complete, we should return our promise, do do other actions on the data
@@ -139,21 +138,20 @@ angular.module('SimpleRESTIonic.controllers', [])
         function getAll() {
             SessionsModel.all()
                 .then(function (result) {
-                    vm.data = result.data.data;
+                    session.data = result.data.data;
                 });
         }
 
         function clearData(){
-            vm.data = null;
+            session.data = null;
         }
 
         function create(object) {
             SessionsModel.create(object)
                 .then(function (result) {
-                    cancelCreate();
                     getAll();
 
-                    var alertPopup = $ionicPopup.alert({
+                    let alertPopup = $ionicPopup.alert({
                         title: 'Session Created',
                         template: 'Name: ' + object.name
                     });
@@ -168,50 +166,29 @@ angular.module('SimpleRESTIonic.controllers', [])
             SessionsModel.delete(id)
                 .then(function (result) {
                     console.debug(result);
-                    cancelEditing();
                     getAll();
                 });
         }
 
         function initCreateForm() {
-            vm.newObject = {name: '', description: ''};
+            session.newObject = {name: '', description: ''};
         }
 
         function editObject(object) {
             $state.go('app.edit_session',{id: object.id});
         }
 
-        function isCurrent(id) {
-            return vm.edited !== null && vm.edited.id === id;
-        }
-
-        function cancelEditing() {
-            vm.edited = null;
-        }
-
-        function cancelCreate() {
-            initCreateForm();
-            vm.isCreating = false;
-        }
-
-        vm.objects = [];
-        vm.edited = null;
-        vm.isEditing = false;
-        vm.isCreating = false;
-        vm.getAll = getAll;
-        vm.create = create;
-        vm.delete = deleteObject;
-        vm.editObject = editObject;
-        vm.isCurrent = isCurrent;
-        vm.cancelEditing = cancelEditing;
-        vm.cancelCreate = cancelCreate;
-        vm.goToBackand = goToBackand;
-        vm.isAuthorized = false;
-        vm.updateSessions = updateSessions;
-        vm.showAddSession = showAddSession;
+        session.objects = [];
+        session.getAll = getAll;
+        session.create = create;
+        session.delete = deleteObject;
+        session.editObject = editObject;
+        session.isAuthorized = false;
+        session.updateSessions = updateSessions;
+        session.showAddSession = showAddSession;
 
         $rootScope.$on('authorized', function () {
-            vm.isAuthorized = true;
+            session.isAuthorized = true;
             getAll();
         });
 
@@ -219,7 +196,115 @@ angular.module('SimpleRESTIonic.controllers', [])
             clearData();
         });
 
-        if(!vm.isAuthorized){
+        if(!session.isAuthorized){
+            $rootScope.$broadcast('logout');
+        }
+
+        initCreateForm();
+        getAll();
+
+    })
+
+    .controller('QuestionCtrl', function (QuestionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
+        let question = this;
+
+        $scope.$on("$ionicView.enter", function () {
+            //getAll();
+        });
+
+        function updateQuestions() {
+            console.debug('updating question list');
+            getData()
+                .then(function (result) {
+                    question.data = result.data.data;
+                    $scope.$broadcast('scroll.refreshComplete');
+                });;
+        }
+
+        function showAddQuestion(){
+            $state.go('app.add_question');
+        }
+
+        Backand.on('questions_updated', function (data) {
+            getAll();
+        });
+
+        Backand.on('questions_deleted', function (data) {
+            getAll();
+        });
+
+        Backand.on('questions_created', function (data) {
+            getAll();
+        });
+   
+        function getData(){
+            // When we need to do actions after our get complete, we should return our promise, do do other actions on the data
+            return QuestionsModel.all();
+        }
+
+        function getAll() {
+            QuestionsModel.all()
+                .then(function (result) {
+                    question.data = result.data.data;
+                });
+        }
+
+        function clearData(){
+            question.data = null;
+        }
+
+        function create(object) {
+            QuestionsModel.create(object)
+                .then(function (result) {
+                    getAll();
+
+                    let alertPopup = $ionicPopup.alert({
+                        title: 'Question Created',
+                        template: 'Name: ' + object.name
+                    });
+
+                    alertPopup.then(function(res) {
+                        $ionicHistory.goBack();
+                    });
+                });
+        }
+
+        function deleteObject(id) {
+            QuestionsModel.delete(id)
+                .then(function (result) {
+                    console.debug(result);
+                    getAll();
+                });
+        }
+
+        function initCreateForm() {
+            question.newObject = {name: '', description: ''};
+        }
+
+        function editObject(object) {
+            // todo this needs to pass session and question id's
+            //$state.go('app.edit_question',{id: object.id});
+        }
+
+        question.objects = [];
+        question.getAll = getAll;
+        question.create = create;
+        question.delete = deleteObject;
+        question.editObject = editObject;
+        question.isAuthorized = false;
+        question.updateSessions = updateSessions;
+        question.showAddSession = showAddSession;
+
+        $rootScope.$on('authorized', function () {
+            question.isAuthorized = true;
+            getAll();
+        });
+
+        $rootScope.$on('logout', function () {
+            clearData();
+        });
+
+        if(!question.isAuthorized){
             $rootScope.$broadcast('logout');
         }
 
