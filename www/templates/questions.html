@@ -1,0 +1,27 @@
+<ion-view view-title="Questions">
+    <ion-content class="padding has-header has-footer">
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="vm.updateSessions()">
+        </ion-refresher>
+        <!-- LIST -->
+        <div class="bar bar-subheader">
+            <div class="list card" ng-repeat="object in vm.data"
+                 ng-class="{'active':vm.isCurrent(object.id)}">
+                <div class="item item-icon-right item-icon-left">
+                    <i class="ion-compose icon" ng-click="vm.editObject(object)"></i>
+
+                    <h2 class="text-center">{{object.name}}</h2>
+                    <i class="icon ion-close-round" ng-click="vm.delete(object.id)"></i>
+                </div>
+                <div class="item item-body">
+                    {{object.description}}
+                </div>
+            </div>
+        </div>
+    </ion-content>
+    <div class="bar bar-footer bar-stable">
+        <button style="width:100%" class="button button-positive" ng-click="vm.showAddSession()">Add Session<i class="icon ion-plus-round"></i></button>
+    </div>
+</ion-view>
+
