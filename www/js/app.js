@@ -72,6 +72,26 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               }
             })
 
+            .state('app.add_question', {
+              url: '/add_question/:session_id',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/add-question.html',
+                  controller: 'QuestionCtrl as question'
+                }
+              }
+            })
+
+            .state('app.edit_question', {
+              url: '/edit_question/:id',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/edit-question.html',
+                  controller: 'EditQuestionCtrl as edit'
+                }
+              }
+            })
+
             .state('app.login', {
               url: '/login',
               views: {
@@ -80,7 +100,18 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
                   controller: 'LoginCtrl as login'
                 }
               }
+            })
+
+            .state('app.about', {
+              url: '/about',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/about.html',
+                }
+              }
             });
+
+
 
         $urlRouterProvider.otherwise('/app/sessions');
 
