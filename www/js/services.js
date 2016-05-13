@@ -26,8 +26,26 @@ angular.module('RTPoll.services', [])
             return Backand.getApiUrl() + baseUrl + objectName;
         }
 
-        service.all = function () {
-            return $http.get(getUrl());
+        service.all = function (session_id) {
+            return $http ({
+              method: 'GET',
+              url: Backand.getApiUrl() + '/1/objects/questions',
+              params: {
+                pageSize: 20,
+                pageNumber: 1,
+                filter: [
+                  {
+                    fieldName: 'session_id',
+                    operator: 'in',
+                    value: session_id
+                  }
+                ],
+                sort: ''
+              }
+            });
+
+
+            //return $http.get(getUrl());
         };
 
         service.fetch = function (id) {
@@ -79,6 +97,7 @@ angular.module('RTPoll.services', [])
         };
 
         service.update = function (id, object) {
+            console.debug('saw update: ', object)
             return $http.put(getUrlForId(id), object);
         };
 
