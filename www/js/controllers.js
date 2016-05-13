@@ -246,7 +246,9 @@ angular.module('RTPoll.controllers', [])
 
         $scope.$on("$ionicView.enter", function () {
             session_id = $stateParams.session_id;
+            console.debug('session id: ', session_id);
             getAll(session_id);
+            question.newObject = {question: '', session_id: session_id};
         });
 
         function updateQuestions() {
@@ -260,7 +262,7 @@ angular.module('RTPoll.controllers', [])
 
         function showAddQuestion(){
             console.debug('showAddQuestion');
-            $state.go('app.add_question');
+            $state.go('app.add_question', {session_id: session_id});
         }
 
         Backand.on('questions_updated', function (data) {
@@ -298,7 +300,7 @@ angular.module('RTPoll.controllers', [])
 
                     let alertPopup = $ionicPopup.alert({
                         title: 'Question Created',
-                        template: 'Name: ' + object.name
+                        template: 'Name: ' + object.question
                     });
 
                     alertPopup.then(function(res) {
@@ -313,10 +315,6 @@ angular.module('RTPoll.controllers', [])
                     console.debug(result);
                     getAll();
                 });
-        }
-
-        function initCreateForm() {
-            question.newObject = {name: '', description: ''};
         }
 
         function editObject(object) {
@@ -345,9 +343,5 @@ angular.module('RTPoll.controllers', [])
         if(!question.isAuthorized){
             $rootScope.$broadcast('logout');
         }
-
-        initCreateForm();
-        getAll();
-
     });
 
