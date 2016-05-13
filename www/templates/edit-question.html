@@ -1,0 +1,19 @@
+<ion-view view-title="Edit Question">
+    <ion-content>
+        <div class="bar bar-subheader">
+            <form class="edit-form" role="form"
+                  ng-submit="edit.update(edit.question.data)" novalidate>
+                <div class="list">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Question</span>
+                        <textarea class="form-control"
+                          ng-model="edit.question.data.question"
+                          placeholder="Enter description"></textarea>
+
+                    </label>
+                </div>
+                <button class="button button-block button-positive" type="submit">Save</button>
+            </form>
+        </div>
+    </ion-content>
+</ion-view>
