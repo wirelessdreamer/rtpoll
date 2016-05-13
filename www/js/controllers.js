@@ -102,21 +102,30 @@ angular.module('RTPoll.controllers', [])
         let edit = this;
         edit.id = $stateParams.id;
         edit.session = {};
-
+        edit.answer_array = [];
         function fetch(id) {
             QuestionsModel.fetch(id)
                 .then(function (result) {
                     edit.question = result;
+                    if(!angular.isUndefined(result.data.answers)){
+                        edit.answer_array = angular.fromJson(result.data.answers);
+                    }
                     console.debug('r:', result);
                 });
         }
 
         function update(object) {
+            object.answers = angular.toJson(edit.answer_array);
             console.debug('update: ', object);
             QuestionsModel.update(object.id, object)
                 .then(function (result) {
                     $ionicHistory.goBack();
                 });
+        }
+
+        function addAnswer(){
+            console.debug('add answer');    
+            edit.answer_array.push('');
         }
 
         $scope.$on("$ionicView.enter", function () {
@@ -125,6 +134,7 @@ angular.module('RTPoll.controllers', [])
 
         edit.fetch = fetch;
         edit.update = update;
+        edit.addAnswer = addAnswer;
     })
 
     .controller('SessionCtrl', function (SessionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
@@ -139,6 +149,7 @@ angular.module('RTPoll.controllers', [])
             getData()
                 .then(function (result) {
                     session.data = result.data.data;
+                    console.debug('r:', result)
                     $scope.$broadcast('scroll.refreshComplete');
                 });
         }
@@ -248,7 +259,7 @@ angular.module('RTPoll.controllers', [])
             session_id = $stateParams.session_id;
             console.debug('session id: ', session_id);
             getAll(session_id);
-            question.newObject = {question: '', session_id: session_id};
+            question.newObject = {question: '', session_id: session_id, answers: ''};
         });
 
         function updateQuestions() {
@@ -286,6 +297,10 @@ angular.module('RTPoll.controllers', [])
                 .then(function (result) {
                     console.debug('got question data back: ', result);
                     question.data = result.data.data;
+                    angular.forEach(question.data, (q) => {                        
+                        q.answer_array = angular.fromJson(q.answers);
+                        console.debug('q:', q);
+                    });
                 });
         }
 
@@ -322,6 +337,11 @@ angular.module('RTPoll.controllers', [])
             $state.go('app.edit_question',{id: object.id});
         }
 
+        function buildAnswerArray(string){
+            console.debug('calledo n: ', string);
+            return angular.fromJson(string);
+        }
+
         question.objects = [];
         question.getAll = getAll;
         question.create = create;
@@ -330,6 +350,7 @@ angular.module('RTPoll.controllers', [])
         question.isAuthorized = false;
         question.updateQuestions = updateQuestions;
         question.showAddQuestion = showAddQuestion;
+        question.buildAnswerArray = buildAnswerArray;
 
         $rootScope.$on('authorized', function () {
             question.isAuthorized = true;

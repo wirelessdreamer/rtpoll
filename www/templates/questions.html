@@ -5,15 +5,15 @@
             on-refresh="question.updateQuestions()">
         </ion-refresher>
         <ion-list>
-            <ion-item class="list card" ng-repeat="object in question.data">
+            <ion-item class="list card" ng-repeat="object in question.data track by $index">
                 <div class="item item-icon-right item-icon-left">
                     <i class="ion-compose icon" ng-click="question.editObject(object)"></i>
 
                     <h2 class="text-center">{{object.question}}</h2>
                     <i class="icon ion-close-round" ng-click="question.delete(object.id)"></i>
                 </div>
-                <div class="item item-body">
-                    {{object.description}}
+                <div ng-repeat="answer in object.answer_array track by $index" class="item item-body">
+                    {{answer}}
                 </div>
             </ion-item>
         </ion-list>
