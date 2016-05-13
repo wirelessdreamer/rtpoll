@@ -98,6 +98,35 @@ angular.module('RTPoll.controllers', [])
         edit.update = update;
     })
 
+    .controller('EditQuestionCtrl', function (QuestionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
+        let edit = this;
+        edit.id = $stateParams.id;
+        edit.session = {};
+
+        function fetch(id) {
+            QuestionsModel.fetch(id)
+                .then(function (result) {
+                    edit.question = result;
+                    console.debug('r:', result);
+                });
+        }
+
+        function update(object) {
+            console.debug('update: ', object);
+            QuestionsModel.update(object.id, object)
+                .then(function (result) {
+                    $ionicHistory.goBack();
+                });
+        }
+
+        $scope.$on("$ionicView.enter", function () {
+            edit.fetch(edit.id);
+        });
+
+        edit.fetch = fetch;
+        edit.update = update;
+    })
+
     .controller('SessionCtrl', function (SessionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
         let session = this;
 
@@ -111,7 +140,11 @@ angular.module('RTPoll.controllers', [])
                 .then(function (result) {
                     session.data = result.data.data;
                     $scope.$broadcast('scroll.refreshComplete');
-                });;
+                });
+        }
+
+        function showQuestions(session_id){
+            $state.go('app.questions', {session_id: session_id});
         }
 
         function showAddSession(){
@@ -186,6 +219,8 @@ angular.module('RTPoll.controllers', [])
         session.isAuthorized = false;
         session.updateSessions = updateSessions;
         session.showAddSession = showAddSession;
+        session.showQuestions = showQuestions;
+
 
         $rootScope.$on('authorized', function () {
             session.isAuthorized = true;
@@ -205,11 +240,13 @@ angular.module('RTPoll.controllers', [])
 
     })
 
-    .controller('QuestionCtrl', function (QuestionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
+    .controller('QuestionCtrl', function (QuestionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup, $stateParams) {
         let question = this;
+        let session_id = $stateParams.session_id;
 
         $scope.$on("$ionicView.enter", function () {
-            //getAll();
+            session_id = $stateParams.session_id;
+            getAll(session_id);
         });
 
         function updateQuestions() {
@@ -218,10 +255,11 @@ angular.module('RTPoll.controllers', [])
                 .then(function (result) {
                     question.data = result.data.data;
                     $scope.$broadcast('scroll.refreshComplete');
-                });;
+                });
         }
 
         function showAddQuestion(){
+            console.debug('showAddQuestion');
             $state.go('app.add_question');
         }
 
@@ -238,13 +276,13 @@ angular.module('RTPoll.controllers', [])
         });
    
         function getData(){
-            // When we need to do actions after our get complete, we should return our promise, do do other actions on the data
-            return QuestionsModel.all();
+            return QuestionsModel.all(session_id);
         }
 
         function getAll() {
-            QuestionsModel.all()
+            QuestionsModel.all(session_id)
                 .then(function (result) {
+                    console.debug('got question data back: ', result);
                     question.data = result.data.data;
                 });
         }
@@ -283,7 +321,7 @@ angular.module('RTPoll.controllers', [])
 
         function editObject(object) {
             // todo this needs to pass session and question id's
-            //$state.go('app.edit_question',{id: object.id});
+            $state.go('app.edit_question',{id: object.id});
         }
 
         question.objects = [];
@@ -292,8 +330,8 @@ angular.module('RTPoll.controllers', [])
         question.delete = deleteObject;
         question.editObject = editObject;
         question.isAuthorized = false;
-        question.updateSessions = updateSessions;
-        question.showAddSession = showAddSession;
+        question.updateQuestions = updateQuestions;
+        question.showAddQuestion = showAddQuestion;
 
         $rootScope.$on('authorized', function () {
             question.isAuthorized = true;
