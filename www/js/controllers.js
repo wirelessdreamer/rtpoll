@@ -98,6 +98,84 @@ angular.module('RTPoll.controllers', [])
         edit.update = update;
     })
 
+    .controller('PollCtrl', function (SessionsModel, QuestionsModel, PollModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
+        let poll = this;
+        poll.id = $stateParams.session_id;
+        poll.session = {};
+        poll.current_question_index = 0;
+
+        function fetch(id) {
+            SessionsModel.fetch(id)
+                .then(function (result) {
+                    poll.session = result;
+                    console.debug('s:', result);
+                });
+
+            QuestionsModel.fetch(id)
+                .then(function (result) {
+                    poll.question = result;
+                    if(!angular.isUndefined(result.data.answers)){
+                        poll.answer_array = angular.fromJson(result.data.answers);
+                    }
+                    console.debug('q:', result,poll);
+                });
+
+            PollModel.fetch(id)
+                .then(function (result) {
+                    poll.session = result;
+                    console.debug('p:', result);
+                });
+
+        }
+
+        function startOver(){
+            console.debug('start over', poll.id);
+            PollModel.fetch(poll.id)
+                .then(function (result) {
+                    console.debug('lookup:', result);
+                    let new_object = {poll_id: poll.id, poll_index: "0"};
+                    if(result.data.data.length == 0){ // does not exist, create                
+                        console.debug('does not exist, create', new_object);
+                        PollModel.create(new_object)
+                            .then(function (result) {
+                                // poll.session = result;
+                                console.debug('created:', result);
+                                poll.current_question_index = 0;
+                            });
+                    }else{
+                        console.debug('exists, update', new_object);
+                        PollModel.update(result.data.data[0].id, new_object)
+                            .then(function (result) {
+                                // poll.session = result;
+                                console.debug('created:', result);
+                                poll.current_question_index = 0;
+                            });
+                    }                        
+            });
+
+            // PollModel.update(poll.id, { poll_id: poll.id, poll_index: "0"})
+            //     .then(function (result) {
+            //         console.debug('u:', result);
+            //     });
+        }
+
+        function update(object) {
+            console.debug('update: ', object);
+            SessionsModel.update(object.id, object)
+                .then(function (result) {
+                    $ionicHistory.goBack();
+                });
+        }
+
+        $scope.$on("$ionicView.enter", function () {
+            poll.fetch(poll.id);
+        });
+
+        poll.fetch = fetch;
+        poll.update = update;
+        poll.startOver = startOver;
+    })
+
     .controller('EditQuestionCtrl', function (QuestionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
         let edit = this;
         edit.id = $stateParams.id;
@@ -236,6 +314,7 @@ angular.module('RTPoll.controllers', [])
         session.updateSessions = updateSessions;
         session.showAddSession = showAddSession;
         session.showQuestions = showQuestions;
+        session.showPoll = showPoll;
 
 
         $rootScope.$on('authorized', function () {

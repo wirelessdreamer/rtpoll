@@ -1,0 +1,23 @@
+<ion-view view-title="Poll">
+    <ion-content class="has-footer">
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="session.updateSessions()">
+        </ion-refresher>
+        <!-- LIST -->
+        <ion-list>
+            <ion-item ng-click="session.showPoll(object.id)" class="list card" ng-repeat="object in session.data">
+                <div class="item item-icon-right item-icon-left">
+                    <h2 class="text-center">{{object.name}}</h2>
+                </div>
+                <div class="item item-body">
+                    {{object.description}}
+                </div>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <div class="bar bar-footer bar-stable">
+        <button style="width:100%" class="button button-positive" ng-click="session.showAddSession()">Add Session<i class="icon ion-plus-round"></i></button>
+    </div>
+</ion-view>
+

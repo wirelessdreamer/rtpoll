@@ -1,0 +1,16 @@
+<ion-view view-title="{{poll.session.data.name}}">
+    <ion-content class="has-footer">
+        <button ng-click="poll.startOver()" class="button button-full button-positive">
+          Start Over
+        </button>
+        <ion-list>
+            <ion-item class="list card">
+                Current Question: {{poll.question.data.question}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <div class="bar bar-footer bar-stable">
+        <button style="width:100%" class="button button-positive" ng-click="poll.showAddQuestion()">&nbsp;Next Question<i class="icon ion-arrow-right-a"></i></button>
+    </div>
+</ion-view>
+

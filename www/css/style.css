@@ -19,3 +19,11 @@
 .item-icon-left .icon, .item-icon-right .icon {
 	font-size: 22px;
 }
+
+.card{
+	white-space: normal;
+}
+
+.item h2 {
+	white-space: normal;
+}

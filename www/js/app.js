@@ -117,7 +117,7 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               views: {
                 'menuContent': {
                   templateUrl: 'templates/run_poll.html',
-                  controller: 'QuestionCtrl as session'
+                  controller: 'PollCtrl as poll'
                 }
               }
             })

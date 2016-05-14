@@ -13,6 +13,51 @@ angular.module('RTPoll.services', [])
         };
     })
 
+    .service('PollModel', function ($http, Backand) {
+        let service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'poll_status/';
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        service.fetch = function (id) {
+           return $http ({
+              method: 'GET',
+              url: getUrl(),
+              params: {
+                pageSize: 20,
+                pageNumber: 1,
+                filter: [
+                  {
+                    fieldName: 'poll_id',
+                    operator: 'equals',
+                    value: id
+                  }
+                ],
+                sort: ''
+              }
+            });
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+
+        service.update = function (id, object) {
+            return $http.put(getUrlForId(id), object);
+        };
+
+        service.delete = function (id) {
+            return $http.delete(getUrlForId(id));
+        };
+    })
+
     .service('QuestionsModel', function ($http, Backand) {
         let service = this,
             baseUrl = '/1/objects/',
@@ -29,7 +74,7 @@ angular.module('RTPoll.services', [])
         service.all = function (session_id) {
             return $http ({
               method: 'GET',
-              url: Backand.getApiUrl() + '/1/objects/questions',
+              url: getUrl(),
               params: {
                 pageSize: 20,
                 pageNumber: 1,
@@ -43,8 +88,6 @@ angular.module('RTPoll.services', [])
                 sort: ''
               }
             });
-
-
             //return $http.get(getUrl());
         };
 
