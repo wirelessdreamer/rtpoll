@@ -133,7 +133,7 @@ angular.module('RTPoll.controllers', [])
             PollModel.fetch(poll.id)
                 .then(function (result) {
                     console.debug('lookup:', result);
-                    let new_object = {poll_id: poll.id, poll_index: "0"};
+                    let new_object = {poll_id: poll.id, poll_index: 0};
                     if(result.data.data.length == 0){ // does not exist, create                
                         console.debug('does not exist, create', new_object);
                         PollModel.create(new_object)
@@ -151,6 +151,29 @@ angular.module('RTPoll.controllers', [])
                                 poll.current_question_index = 0;
                             });
                     }                        
+            });
+        }
+
+        function nextQuestion(){
+            console.debug('next question', poll.id);
+            PollModel.fetch(poll.id)
+                .then(function (result) {
+                    let pollStatus = result.data.data[0];
+                    console.debug('status:', pollStatus);
+                    let poll_index = pollStatus.poll_index;
+                    let questionCount = poll.question.data.data.length;
+                    console.debug('question count: ', questionCount);
+                    if (questionCount <= poll_index + 1){
+                        console.debug('no more questions to show');
+                    }else{
+                        console.debug('still more questions');
+                    }
+                    let new_object = result.data.data[0];
+                    new_object.poll_index = new_object.poll_index + 1;
+                    PollModel.update(result.data.data[0].id, new_object)
+                        .then(function (result) {
+                            console.debug('update result:', result);                                     
+                    });                 
             });
 
             // PollModel.update(poll.id, { poll_id: poll.id, poll_index: "0"})
@@ -174,6 +197,7 @@ angular.module('RTPoll.controllers', [])
         poll.fetch = fetch;
         poll.update = update;
         poll.startOver = startOver;
+        poll.nextQuestion = nextQuestion;
     })
 
     .controller('EditQuestionCtrl', function (QuestionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
