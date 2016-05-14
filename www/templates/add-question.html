@@ -1,22 +1,29 @@
-
 <ion-view view-title="Create Question">
     <ion-content>
         <ion-list>
-            <label class="item item-input item-stacked-label">
-                <span class="input-label">Question: </span>
-                <textarea class="form-control"
-                  ng-model="edit.question.data.question"
-                  placeholder="Enter description"></textarea>
-            </label>
-            <ion-item ng-repeat="answer in edit.answer_array track by $index">
-                <input class="form-control"
-                      ng-model="edit.answer_array[$index]"
-                      placeholder="Enter answer"></input>
-            </ion-item>
+            <ion-item>
+                <form class="create-form" role="form"
+                      ng-submit="question.create(question.newObject)" novalidate>
+                    <div class="list">
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Question</span>
+                        <textarea placeholder="Comments" class="form-control"
+                                  ng-model="question.newObject.question"
+                                  placeholder="Enter description"></textarea>
+                        </label>
+                        <ion-item ng-repeat="answer in question.newObject.answer_array track by $index">
+                            <input class="form-control"
+                                  ng-model="question.newObject.answer_array[$index]"
+                                  placeholder="Enter answer"></input>
+                        </ion-item>
+                        <pre>{{question.newObject | json}}</pre>
+                    </div>
+                </form>
+            </ion-item> 
         </ion-list>
     </ion-content>
-    <div class="bar bar-footer bar-stable">
-        <button style="width:49%" class="button button-balanced" ng-click="edit.addAnswer()">Add Answer<i class="icon ion-plus-round"></i></button>
+     <div class="bar bar-footer bar-stable">
+        <button style="width:49%" class="button button-balanced" ng-click="question.newObject.answer_array.push('')">Add Answer<i class="icon ion-plus-round"></i></button>
         <button style="width:49%" class="button button-positive" ng-click="question.create(question.newObject)">Create</button>
     </div>
 </ion-view>

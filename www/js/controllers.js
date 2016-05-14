@@ -158,6 +158,11 @@ angular.module('RTPoll.controllers', [])
             $state.go('app.questions', {session_id: session_id});
         }
 
+        function showPoll(session_id){
+            console.debug('show poll');
+            $state.go('app.run_poll', {session_id: session_id});
+        }
+
         function showAddSession(){
             $state.go('app.add_session');
         }
@@ -259,13 +264,17 @@ angular.module('RTPoll.controllers', [])
             session_id = $stateParams.session_id;
             console.debug('session id: ', session_id);
             getAll(session_id);
-            question.newObject = {question: '', session_id: session_id, answers: ''};
+            question.newObject = {question: '', session_id: session_id, answers: '', answer_array: []};
         });
 
         function updateQuestions() {
             console.debug('updating question list');
             getData()
                 .then(function (result) {
+                    angular.forEach(result.data.data, (question) => {
+                        question.answer_array = angular.fromJson(question.answers);
+                    });
+
                     question.data = result.data.data;
                     $scope.$broadcast('scroll.refreshComplete');
                 });
@@ -297,7 +306,8 @@ angular.module('RTPoll.controllers', [])
                 .then(function (result) {
                     console.debug('got question data back: ', result);
                     question.data = result.data.data;
-                    angular.forEach(question.data, (q) => {                        
+                    angular.forEach(question.data, (q) => {   
+                        console.debug('response: ', q);                     
                         q.answer_array = angular.fromJson(q.answers);
                         console.debug('q:', q);
                     });
@@ -309,10 +319,10 @@ angular.module('RTPoll.controllers', [])
         }
 
         function create(object) {
+            object.answers = angular.toJson(object.answer_array);
             QuestionsModel.create(object)
                 .then(function (result) {
                     getAll();
-
                     let alertPopup = $ionicPopup.alert({
                         title: 'Question Created',
                         template: 'Name: ' + object.question

@@ -102,6 +102,26 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               }
             })
 
+            .state('app.poll', {
+              url: '/poll',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/poll.html',
+                  controller: 'SessionCtrl as session'
+                }
+              }
+            })
+
+            .state('app.run_poll', {
+              url: '/poll/:session_id',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/run_poll.html',
+                  controller: 'QuestionCtrl as session'
+                }
+              }
+            })
+
             .state('app.about', {
               url: '/about',
               views: {
