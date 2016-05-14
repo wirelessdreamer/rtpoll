@@ -111,7 +111,7 @@ angular.module('RTPoll.controllers', [])
                     console.debug('s:', result);
                 });
 
-            QuestionsModel.fetch(id)
+            QuestionsModel.all(id)
                 .then(function (result) {
                     poll.question = result;
                     if(!angular.isUndefined(result.data.answers)){

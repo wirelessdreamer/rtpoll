@@ -4,8 +4,14 @@
           Start Over
         </button>
         <ion-list>
-            <ion-item class="list card">
-                Current Question: {{poll.question.data.question}}
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
+                Current Question: {{poll.question.data.data[poll.current_question_index].question}}
+            </ion-item>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
+                Next Question: {{poll.question.data.data[poll.current_question_index + 1].question}}
+            </ion-item>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 == poll.question.data.data.length">
+                Last Question: {{poll.question.data.data[poll.current_question_index].question}}
             </ion-item>
         </ion-list>
     </ion-content>
