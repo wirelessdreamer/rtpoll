@@ -1,0 +1,22 @@
+<ion-view view-title="{{poll.session.data.name}}">
+    <ion-content class="has-footer">
+        <button ng-click="poll.startOver()" class="button button-full button-positive">
+          Start Over
+        </button>
+        <ion-list>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
+                Current Question: {{poll.question.data.data[poll.current_question_index].question}}
+            </ion-item>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
+                Next Question: {{poll.question.data.data[poll.current_question_index + 1].question}}
+            </ion-item>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 == poll.question.data.data.length">
+                Last Question: {{poll.question.data.data[poll.current_question_index].question}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <div class="bar bar-footer bar-stable">
+        <button style="width:100%" class="button button-positive" ng-click="poll.nextQuestion()">&nbsp;Next Question<i class="icon ion-arrow-right-a"></i></button>
+    </div>
+</ion-view>
+

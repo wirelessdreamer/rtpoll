@@ -1,13 +1,13 @@
-<ion-view view-title="Poll">
+<ion-view view-title="Join Poll">
     <ion-content class="has-footer">
         <ion-refresher
             pulling-text="Pull to refresh..."
             on-refresh="session.updateSessions()">
         </ion-refresher>
         <!-- LIST -->
-
+        
         <ion-list>
-            <ion-item ng-click="session.showPoll(object.id)" class="list card" ng-repeat="object in session.data">
+            <ion-item ng-click="session.viewPoll(object.id)" class="list card" ng-repeat="object in session.data">
                 <div class="item item-icon-right item-icon-left">
                     <h2 class="text-center">{{object.name}}</h2>
                 </div>

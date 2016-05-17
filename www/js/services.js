@@ -54,7 +54,9 @@ angular.module('RTPoll.services', [])
         };
 
         service.delete = function (id) {
-            return $http.delete(getUrlForId(id));
+            let result = service.fetch(id);
+            console.debug('delete based off of ', result);
+            //return $http.delete(getUrlForId(id));
         };
     })
 
@@ -81,11 +83,12 @@ angular.module('RTPoll.services', [])
                 filter: [
                   {
                     fieldName: 'session_id',
-                    operator: 'in',
+                    operator: 'equals',
                     value: session_id
                   }
                 ],
-                sort: ''
+                sort: '',
+                deep: true
               }
             });
             //return $http.get(getUrl());
@@ -125,7 +128,16 @@ angular.module('RTPoll.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http ({
+              method: 'GET',
+              url: getUrl(),
+              params: {
+                pageSize: 20,
+                pageNumber: 1,
+                sort: '',
+                deep: true
+              }
+            });
         };
 
         service.fetch = function (id) {

@@ -32,11 +32,11 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
                 controller: 'LoginCtrl as login'
               })
 
-            .state('app.sessions', {
-              url: '/sessions',
+            .state('app.manage', {
+              url: '/manage',
               views: {
                 'menuContent': {
-                  templateUrl: 'templates/sessions.html',
+                  templateUrl: 'templates/manage-poll.html',
                   controller: 'SessionCtrl as session'
                 }
               }
@@ -46,7 +46,7 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               url: '/add_session',
               views: {
                 'menuContent': {
-                  templateUrl: 'templates/add-session.html',
+                  templateUrl: 'templates/add-poll.html',
                   controller: 'SessionCtrl as session'
                 }
               }
@@ -56,7 +56,7 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               url: '/edit_session/:id',
               views: {
                 'menuContent': {
-                  templateUrl: 'templates/edit-session.html',
+                  templateUrl: 'templates/edit-poll.html',
                   controller: 'EditCtrl as edit'
                 }
               }
@@ -116,7 +116,27 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               url: '/poll/:session_id',
               views: {
                 'menuContent': {
-                  templateUrl: 'templates/run_poll.html',
+                  templateUrl: 'templates/run-poll.html',
+                  controller: 'PollCtrl as poll'
+                }
+              }
+            })
+
+            .state('app.join_poll', {
+              url: '/join_poll',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/join-poll.html',
+                  controller: 'SessionCtrl as session'
+                }
+              }
+            })
+
+            .state('app.view_poll', {
+              url: '/view_poll/:session_id',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/view-poll.html',
                   controller: 'PollCtrl as poll'
                 }
               }
@@ -131,9 +151,7 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
               }
             });
 
-
-
-        $urlRouterProvider.otherwise('/app/sessions');
+        $urlRouterProvider.otherwise('/app/manage');
 
         $httpProvider.interceptors.push('APIInterceptor');
         BackandProvider.runSocket(true);

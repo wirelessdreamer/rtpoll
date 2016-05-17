@@ -1,0 +1,15 @@
+<ion-view view-title="{{poll.session.data.name}}">
+    <ion-content class="has-footer">
+        <ion-list>
+            <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
+                {{poll.question.data.data[poll.current_question_index].question}}
+            </ion-item>
+            <ion-item class="list card" ng-repeat="answer in poll.answer_array">
+                {{$index + 1}}. {{answer}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <div class="bar bar-footer bar-stable">
+        <button style="width:100%" class="button button-positive" ng-click="poll.answerQuestion()">Answer Question</button>
+    </div>
+</ion-view>
