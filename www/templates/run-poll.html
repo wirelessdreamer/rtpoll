@@ -14,6 +14,8 @@
                 Last Question: {{poll.question.data.data[poll.current_question_index].question}}
             </ion-item>
         </ion-list>
+        Index: {{poll.current_question_index}}
+
     </ion-content>
     <div class="bar bar-footer bar-stable">
         <button style="width:100%" class="button button-positive" ng-click="poll.nextQuestion()">&nbsp;Next Question<i class="icon ion-arrow-right-a"></i></button>
