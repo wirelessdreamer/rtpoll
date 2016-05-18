@@ -27,3 +27,7 @@
 .item h2 {
 	white-space: normal;
 }
+
+.active-answer {
+	background-color: lightgrey;
+}

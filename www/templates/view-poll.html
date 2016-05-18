@@ -4,7 +4,7 @@
             <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
                 {{poll.question.data.data[poll.current_question_index].question}}
             </ion-item>
-            <ion-item class="list card" ng-repeat="answer in poll.question.data.data[poll.current_question_index].answer_array">
+            <ion-item ng-class="{'active-answer': poll.answer_index == $index}" class="list card" ng-click="poll.answer_index = $index" ng-repeat="answer in poll.question.data.data[poll.current_question_index].answer_array">
                 {{$index + 1}}. {{answer}}
             </ion-item>
         </ion-list>

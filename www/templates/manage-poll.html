@@ -6,15 +6,18 @@
         </ion-refresher>
         <!-- LIST -->
         <ion-list>
-            <ion-item ng-click="session.showQuestions(object.id)"  class="list card" ng-repeat="object in session.data">
+            <ion-item class="list card" ng-repeat="object in session.data">
                 <div class="item item-icon-right item-icon-left">
                     <i class="ion-compose icon" ng-click="$event.stopPropagation();session.editObject(object)"></i>
 
                     <h2 class="text-center">{{object.name}}</h2>
                     <i class="icon ion-close-round" ng-click="$event.stopPropagation();session.delete(object.id)"></i>
                 </div>
-                <div class="item item-body">
-                    {{object.description}}
+                <div class="item item-icon-right item-icon-left">
+                    <i class="icon ion-arrow-right-b" ng-click="$event.stopPropagation();session.showPoll(object.id)"></i>
+
+                    <h2 class="text-center">{{object.description}}</h2>
+                    <i class="icon ion-navicon" ng-click="$event.stopPropagation();session.showQuestions(object.id)"></i>
                 </div>
             </ion-item>
         </ion-list>

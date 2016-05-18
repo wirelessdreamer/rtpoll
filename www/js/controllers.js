@@ -98,42 +98,49 @@ angular.module('RTPoll.controllers', [])
         edit.update = update;
     })
 
-    .controller('PollCtrl', function (SessionsModel, QuestionsModel, PollModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
+    .controller('PollCtrl', function (SessionsModel, QuestionsModel, PollModel, AnswersModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
         let poll = this;
         poll.id = $stateParams.session_id;
         poll.session = {};
         poll.current_question_index = 0;
+        poll.answer_index = -1;
 
         Backand.on('poll_status_updated', function (data) {
-            console.debug('poll status updated', data);
+            console.debug('poll status updated', Number(data[1].Value));
             poll.current_question_index = Number(data[1].Value);
+            poll.answer_index = -1;
         });
 
         Backand.on('poll_status_created', function (data) {
-            console.debug('poll status created', data);
+            console.debug('poll status created', Number(data[1].Value));
             poll.current_question_index = Number(data[1].Value);
+            poll.answer_index = -1;
+        });
+
+        Backand.on('answer_created', function (data) {
+            console.debug('answer created', data);
+            AnswersModel.all(poll.id,poll.current_question_index).then( (result) => {
+                    //console.debug('q:', poll);
+                });
         });
 
         function fetch(id) {
             SessionsModel.fetch(id)
                 .then( (result) => {
                     poll.session = result;
-                    console.debug('s:', result);
+                    //console.debug('s:', result);
                 });
 
             QuestionsModel.all(id)
                 .then( (result) => {
                     poll.question = result;
-                    angular.forEach(result.data.data, (question) => {
-                        question.answer_array = angular.fromJson(question.answers);
-                    });
-                    console.debug('q:', poll);
+                    //console.debug('q:', poll);
                 });
 
             PollModel.fetch(id)
                 .then( (result) => {
                     poll.session = result;
-                    console.debug('p:', result);
+                    //console.debug('p:', result);
                 });
 
         }
@@ -150,17 +157,25 @@ angular.module('RTPoll.controllers', [])
                             .then( (result) => {
                                 // poll.session = result;
                                 console.debug('created:', result);
-                                poll.current_question_index = 0;
                             });
                     }else{
-                        console.debug('exists, update', new_object);
+                        console.debug('exists, update', result.data.data[0].id, new_object);
                         PollModel.update(result.data.data[0].id, new_object)
                             .then( (result) => {
                                 // poll.session = result;
                                 console.debug('created:', result);
-                                poll.current_question_index = 0;
                             });
                     }                        
+            });
+        }
+
+        function answerQuestion(){
+            let object = {
+                answer: poll.answer_index, question_id: poll.current_question_index, session_id: poll.id
+            };
+            AnswersModel.create(object)
+                .then( (result) => {
+                    console.debug('answered question');      
             });
         }
 
@@ -168,7 +183,6 @@ angular.module('RTPoll.controllers', [])
             PollModel.fetch(poll.id)
                 .then( (result) => {
                     let pollStatus = result.data.data[0];
-                    console.debug('status:', pollStatus);
                     let poll_index = pollStatus.poll_index;
                     let questionCount = poll.question.data.data.length;
                     if (questionCount <= poll_index + 1){
@@ -208,6 +222,7 @@ angular.module('RTPoll.controllers', [])
         poll.update = update;
         poll.startOver = startOver;
         poll.nextQuestion = nextQuestion;
+        poll.answerQuestion = answerQuestion;
     })
 
     .controller('EditQuestionCtrl', function (QuestionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
@@ -342,11 +357,21 @@ angular.module('RTPoll.controllers', [])
         }
 
         function deleteObject(id) {
-            SessionsModel.delete(id)
+            var confirmPopup = $ionicPopup.confirm({
+              title: 'Delete Session?',
+              template: 'This can not be undone'
+            });
+
+            confirmPopup.then(function(res) {
+              if(res) {
+                SessionsModel.delete(id)
                 .then( (result) => {
                     console.debug(result);
                     getAll();
-                });
+                });                              
+              }
+            });
+            
         }
 
         function initCreateForm() {
@@ -440,11 +465,10 @@ angular.module('RTPoll.controllers', [])
                     console.debug('got question data back: ', result);
                     question.data = result.data.data;
                     angular.forEach(question.data, (q) => {   
-                        console.debug('response: ', q);                     
                         angular.forEach(result.data.data, (question) => {
                             q.answer_array = angular.fromJson(q.answers);
                         });
-                        console.debug('q:', q);
+                        //console.debug('q:', q);
                     });
                 });
         }

@@ -60,7 +60,7 @@ angular.module('RTPoll.services', [])
         };
     })
 
-    .service('QuestionsModel', function ($http, Backand) {
+    .service('QuestionsModel', function ($http, Backand, uuidService) {
         let service = this,
             baseUrl = '/1/objects/',
             objectName = 'questions/';
@@ -89,6 +89,66 @@ angular.module('RTPoll.services', [])
                 ],
                 sort: '',
                 deep: true
+              }
+            });
+            //return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            console.debug('calling fetch');
+            let object = $http.get(getUrlForId(id));
+            console.debug('O:', object);
+            return object;
+        };
+
+        service.create = function (object) {
+            object.question_id = uuidService.generateUUID();
+            console.debug('create:', object);
+            return $http.post(getUrl(), object);
+        };
+
+        service.update = function (id, object) {
+            return $http.put(getUrlForId(id), object);
+        };
+
+        service.delete = function (id) {
+            return $http.delete(getUrlForId(id));
+        };
+    })
+
+    .service('AnswersModel', function ($http, Backand) {
+        let service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'answers/';
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        service.all = function (session_id, question_id) {
+            return $http ({
+              method: 'GET',
+              url: getUrl(),
+              params: {
+                pageSize: 20,
+                pageNumber: 1,
+                filter: [
+                  {
+                    fieldName: 'session_id',
+                    operator: 'equals',
+                    value: session_id
+                  },
+                  {
+                    fieldName: 'question_id',
+                    operator: 'equals',
+                    value: question_id
+                  }
+                ],
+                sort: '',
               }
             });
             //return $http.get(getUrl());
@@ -176,5 +236,18 @@ angular.module('RTPoll.services', [])
 
         service.signout = function () {
             return Backand.signout();
+        };
+    })
+
+    .service('uuidService', function(){
+        let service = this;
+        service.generateUUID = function () {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
         };
     });
