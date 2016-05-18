@@ -146,7 +146,6 @@ angular.module('RTPoll.services', [])
                 sort: '',
               }
             });
-            //return $http.get(getUrl());
         };
 
         service.fetch = function (id) {
