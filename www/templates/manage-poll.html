@@ -14,10 +14,9 @@
                     <i class="icon ion-close-round" ng-click="$event.stopPropagation();session.delete(object.id)"></i>
                 </div>
                 <div class="item item-icon-right item-icon-left">
-                    <i class="icon ion-arrow-right-b" ng-click="$event.stopPropagation();session.showPoll(object.id)"></i>
+                    <i class="icon ion-navicon" ng-click="$event.stopPropagation();session.showQuestions(object.id)"></i>
 
                     <h2 class="text-center">{{object.description}}</h2>
-                    <i class="icon ion-navicon" ng-click="$event.stopPropagation();session.showQuestions(object.id)"></i>
                 </div>
             </ion-item>
         </ion-list>

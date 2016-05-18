@@ -2,7 +2,7 @@
     <ion-content class="has-footer">
         <ion-list>
             <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
-                {{poll.question.data.data[poll.current_question_index].question}}
+                {{poll.question.data.data[poll.current_question_index].question}} 
             </ion-item>
             <ion-item ng-class="{'active-answer': poll.answer_index == $index}" class="list card" ng-click="poll.answer_index = $index" ng-repeat="answer in poll.question.data.data[poll.current_question_index].answer_array">
                 {{$index + 1}}. {{answer}}
@@ -11,6 +11,6 @@
         Index: {{poll.current_question_index}}
     </ion-content>
     <div class="bar bar-footer bar-stable">
-        <button style="width:100%" class="button button-positive" ng-click="poll.answerQuestion()">Answer Question</button>
+        <button ng-disabled="poll.answer_index == -1" style="width:100%" class="button button-positive" ng-click="poll.answerQuestion(poll.question.data.data[poll.current_question_index].question_id)">Answer Question</button>
     </div>
 </ion-view>

@@ -129,23 +129,18 @@ angular.module('RTPoll.services', [])
             return Backand.getApiUrl() + baseUrl + objectName;
         }
 
-        service.all = function (session_id, question_id) {
+        service.all = function (session_id) {
             return $http ({
               method: 'GET',
               url: getUrl(),
               params: {
-                pageSize: 20,
+                pageSize: 20000,
                 pageNumber: 1,
                 filter: [
                   {
                     fieldName: 'session_id',
                     operator: 'equals',
                     value: session_id
-                  },
-                  {
-                    fieldName: 'question_id',
-                    operator: 'equals',
-                    value: question_id
                   }
                 ],
                 sort: '',

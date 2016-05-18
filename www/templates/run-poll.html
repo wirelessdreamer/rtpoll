@@ -5,13 +5,14 @@
         </button>
         <ion-list>
             <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
-                Current Question: {{poll.question.data.data[poll.current_question_index].question}}
+                Current Question: {{poll.question.data.data[poll.current_question_index].question}} 
             </ion-item>
             <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
                 <h2>Responses</h2>
                 <p ng-if="poll.current_question_index + 1 < poll.question.data.data.length" ng-repeat="answer in poll.question.data.data[poll.current_question_index].answer_array">
-                    {{answer}} - 
+                    {{answer}} - {{poll.answer_counts[poll.question.data.data[poll.current_question_index].question_id][$index]}}
                 </p>
+                
             </ion-item>
             <ion-item class="list card" ng-if="poll.current_question_index + 1 < poll.question.data.data.length">
                 Next Question: {{poll.question.data.data[poll.current_question_index + 1].question}}
