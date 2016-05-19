@@ -107,7 +107,7 @@ angular.module('RTPoll.controllers', [])
         poll.answer_counts = {};
 
         Backand.on('poll_status_updated', function (data) {
-            console.debug('poll status updated', Number(data[1].Value));
+            console.debug('poll status updated', data);
             poll.current_question_index = Number(data[1].Value);
             poll.answer_index = -1;
         });
@@ -123,7 +123,7 @@ angular.module('RTPoll.controllers', [])
                 console.debug('answer result:', result);
                 let counts = {};
                 angular.forEach(result.data.data, (answer) => {
-                    console.debug('a',answer);
+                    //console.debug('a',answer);
                     if (!counts.hasOwnProperty(answer.question_id)){
                         counts[answer.question_id] = {};    
                     }
@@ -131,7 +131,7 @@ angular.module('RTPoll.controllers', [])
                         counts[answer.question_id][answer.answer] = 0
                     }
                     counts[answer.question_id][answer.answer]++;
-                    console.debug('updateD:',counts);
+                    //console.debug('updateD:',counts);
                 });
                 poll.answer_counts = counts;
             });
@@ -192,6 +192,9 @@ angular.module('RTPoll.controllers', [])
                                     $q.all(delete_requests).then(function (results) {
                                         console.debug('deleted all');
                                         updateAnswerCount();
+                                                   
+                                        poll.current_question_index = Number(new_object.poll_index);                              
+                                        console.debug('starting poll over: ', poll.current_question_index,result);
                                     });
                                 });
                             });
@@ -213,18 +216,19 @@ angular.module('RTPoll.controllers', [])
             PollModel.fetch(poll.id)
                 .then( (result) => {
                     let pollStatus = result.data.data[0];
-                    let poll_index = pollStatus.poll_index;
+                    let poll_index = Number(pollStatus.poll_index);
+                    console.debug('current question: ', poll_index);
                     let questionCount = poll.question.data.data.length;
                     if (questionCount <= poll_index + 1){
                         console.debug('no more questions to show');
                     }else{
                         let new_object = result.data.data[0];
-                        new_object.poll_index = new_object.poll_index + 1;
+                        new_object.poll_index = Number(new_object.poll_index) + 1;
                         console.debug('update with:', new_object);   
 
                         PollModel.update(result.data.data[0].id, new_object)
                             .then( (result) => {                                
-                                poll.current_question_index = new_object.poll_index;                              
+                                poll.current_question_index = Number(new_object.poll_index);                              
                                 console.debug('successfully updated to: ', poll.current_question_index,result);
                         });  
                     }
