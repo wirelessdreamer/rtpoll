@@ -134,6 +134,17 @@ Create a mobile application using the real time database with [ionic](http://www
   		```
         click save
 
+  	- Objects->answers->Actions->Create->After (click on plus)
+  		Name the action
+  		```javascript
+            'use strict';
+            function backandCallback(userInput, dbRow, parameters, userProfile) {
+                socket.emitAll("answer_created",dbRow);
+                return {};
+            }
+  		```
+        click save
+
      - Objects->questions->Actions->Create->After (click on plus)
   		Name the action
   		```javascript

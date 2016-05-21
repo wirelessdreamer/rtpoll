@@ -19,9 +19,9 @@ angular.module('RTPoll', ['ionic', 'backand', 'RTPoll.controllers', 'RTPoll.serv
     })
     .config(function (BackandProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
 
-        BackandProvider.setAppName('rttest');
-        BackandProvider.setSignUpToken('6a35bcb1-e7de-4950-9904-ae579e24f9e6');
-        BackandProvider.setAnonymousToken('9818564a-4dbe-41d7-ba38-136a0064c97e');
+        BackandProvider.setAppName('rtpoll');
+        BackandProvider.setSignUpToken('71fe16c6-bda2-4975-9c07-79bd8c19640d');
+        BackandProvider.setAnonymousToken('50353a68-ec6f-4556-910a-d73344f12911');
         
         $stateProvider
             // setup an abstract state for the menu
