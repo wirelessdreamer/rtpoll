@@ -170,7 +170,7 @@ angular.module('RTPoll.controllers', [])
             PollModel.fetch(poll.id)
                 .then((result) => {
                     //console.debug('lookup:', result);
-                    let new_object = {poll_id: poll.id, poll_index: 0};
+                    let new_object = {poll_id: poll.id, poll_index: 1};
                     if(result.data.data.length == 0){ // does not exist, create                
                         console.debug('does not exist, create', new_object);
                         PollModel.create(new_object)
@@ -219,7 +219,7 @@ angular.module('RTPoll.controllers', [])
                     let poll_index = Number(pollStatus.poll_index);
                     console.debug('current question: ', poll_index);
                     let questionCount = poll.question.data.data.length;
-                    if (questionCount <= poll_index + 1){
+                    if (questionCount < poll_index + 1){
                         console.debug('no more questions to show');
                     }else{
                         let new_object = result.data.data[0];
@@ -459,11 +459,14 @@ angular.module('RTPoll.controllers', [])
             console.debug('updating question list');
             getData()
                 .then( (result) => {
-                    angular.forEach(result.data.data, (question) => {
-                        question.answer_array = angular.fromJson(question.answers);
-                    });
+//                    angular.forEach(result.data.data, (question) => {
+//                        question.answer_array = angular.fromJson(question.answers);
+//                        console.debug('set array: ', question.answer_array);
+//                                            question.data = result.data.data;
+//
+//                    });
 
-                    question.data = result.data.data;
+                console.debug('data:',question.data);
                     $scope.$broadcast('scroll.refreshComplete');
                 });
         }
@@ -499,7 +502,7 @@ angular.module('RTPoll.controllers', [])
                     question.data = result.data.data;
                     angular.forEach(question.data, (q) => {   
                         angular.forEach(result.data.data, (question) => {
-                            question.answer_array = angular.fromJson(q.answers);
+                            question.answer_array = angular.fromJson(question.answers);
                         });
                         //console.debug('q:', q);
                     });

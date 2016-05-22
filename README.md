@@ -227,3 +227,8 @@ Create a mobile application using the real time database with [ionic](http://www
 
 11 - change application name in  /js/app.js file at line 26
 to your new application name.
+
+12 - to host your app with backand you'll need to install the backand module do that with:
+npm install -g backand
+
+13 - run the hosting command to deploy to backand for testing
