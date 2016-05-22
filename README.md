@@ -2,6 +2,8 @@
 
 Create a mobile application using the real time database with [ionic](http://www.ionicframework.com) and [backand](http://www.backand.com).
 
+Setup Video to walk you through this process: https://www.youtube.com/watch?v=1tFm4Aj8MDc
+
 1 - To run starter, download zip and run ionic start:
 
     git clone https://github.com/wirelessdreamer/rtpoll.git rtpoll
