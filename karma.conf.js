@@ -5,8 +5,19 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     frameworks: ['angular','jasmine'],
     angular: ['mocks'],
+    reporters: ['progress', 'coverage'],
+	preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'www/js/*.js': ['coverage']
+    },
+    coverageReporter: {
+      type : 'html',
+      dir : 'coverage/'
+    },
     files: [
-      'js/*.js',
+      'www/js/*.js',
       'spec/*.spec.js'
     ]
   });

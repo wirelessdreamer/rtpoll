@@ -3,7 +3,7 @@
 angular.module('RTPoll.services', [])
 
     .service('APIInterceptor', function ($rootScope, $q) {
-        let service = this;
+        var service = this;
 
         service.responseError = function (response) {
             if (response.status === 401) {
@@ -14,7 +14,7 @@ angular.module('RTPoll.services', [])
     })
 
     .service('PollModel', function ($http, Backand) {
-        let service = this,
+        var service = this,
             baseUrl = '/1/objects/',
             objectName = 'poll_status/';
 
@@ -54,14 +54,14 @@ angular.module('RTPoll.services', [])
         };
 
         service.delete = function (id) {
-            let result = service.fetch(id);
+            var result = service.fetch(id);
             console.debug('delete based off of ', result);
             //return $http.delete(getUrlForId(id));
         };
     })
 
     .service('QuestionsModel', function ($http, Backand, uuidService) {
-        let service = this,
+        var service = this,
             baseUrl = '/1/objects/',
             objectName = 'questions/';
 
@@ -96,7 +96,7 @@ angular.module('RTPoll.services', [])
 
         service.fetch = function (id) {
             console.debug('calling fetch');
-            let object = $http.get(getUrlForId(id));
+            var object = $http.get(getUrlForId(id));
             console.debug('O:', object);
             return object;
         };
@@ -117,7 +117,7 @@ angular.module('RTPoll.services', [])
     })
 
     .service('AnswersModel', function ($http, Backand) {
-        let service = this,
+        var service = this,
             baseUrl = '/1/objects/',
             objectName = 'answers/';
 
@@ -150,7 +150,7 @@ angular.module('RTPoll.services', [])
 
         service.fetch = function (id) {
             console.debug('calling fetch');
-            let object = $http.get(getUrlForId(id));
+            var object = $http.get(getUrlForId(id));
             console.debug('O:', object);
             return object;
         };
@@ -169,7 +169,7 @@ angular.module('RTPoll.services', [])
     })
 
     .service('SessionsModel', function ($http, Backand) {
-        let service = this,
+        var service = this,
             baseUrl = '/1/objects/',
             objectName = 'sessions/';
 
@@ -196,7 +196,7 @@ angular.module('RTPoll.services', [])
 
         service.fetch = function (id) {
             console.debug('calling fetch');
-            let object = $http.get(getUrlForId(id));
+            var object = $http.get(getUrlForId(id));
             console.debug('O:', object);
             return object;
         };
@@ -216,9 +216,9 @@ angular.module('RTPoll.services', [])
     })
 
     .service('LoginService', function (Backand) {
-        let service = this;
+        var service = this;
 
-        service.signin = function (email, password, appName) {
+        service.signin = function (email, password) {
             //call Backand for sign in
             return Backand.signin(email, password);
         };
@@ -234,7 +234,7 @@ angular.module('RTPoll.services', [])
     })
 
     .service('uuidService', function(){
-        let service = this;
+        var service = this;
         service.generateUUID = function () {
             var d = new Date().getTime();
             var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

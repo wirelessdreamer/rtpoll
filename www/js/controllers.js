@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('RTPoll.controllers', [])
-    .controller('LoginCtrl', function (Backand, $state, $rootScope, LoginService, $ionicPopup, $ionicHistory) {
-        let login = this;
+    .controller('LoginCtrl', function (Backand, $state, $rootScope, LoginService, $ionicPopup, $ionicHistory, $log) {
+        var login = this;
         login.user = 'Anonymous';
 
         function handleLoginSuccess(user){
             onLogin();
             login.user = user || 'Anonymous';
-            console.debug('successful login ', login.user);
+            $log.debug('successful login ', login.user);
         }
 
         function showLogin(){
@@ -23,14 +23,14 @@ angular.module('RTPoll.controllers', [])
 
         function signin() {
             LoginService.signin(login.email, login.password)
-                .then(handleLoginSuccess(login.email),  (error) => {
+                .then(handleLoginSuccess(login.email),  function(error) {
                     login.user = '';
-                    console.log(error)
+                    $log.log(error)
                 })
         }
 
         function anonymousLogin(){
-            LoginService.anonymousLogin();
+            LoginService.anonymousLogin(); // doesn't really do anything, so don't have to chaing success in a promise from it refactor this is that changes
             handleLoginSuccess();
         }
 
@@ -45,15 +45,15 @@ angular.module('RTPoll.controllers', [])
         }
 
         function signout() {
-            console.debug('signout');
+            $log.debug('signout');
             LoginService.signout()
-                .then( () => {
-                    let alertPopup = $ionicPopup.alert({
+                .then( function() {
+                    var alertPopup = $ionicPopup.alert({
                         title: 'Logged out',
                         template: 'User: ' + login.user
                     });
 
-                    alertPopup.then((res) => {
+                    alertPopup.then(function(res) {
                         $state.go('app.login');
                         login.user = 'Anonymous';
                         $rootScope.$broadcast('logout');
@@ -70,13 +70,13 @@ angular.module('RTPoll.controllers', [])
     })    
 
     .controller('EditCtrl', function (SessionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
-        let edit = this;
+        var edit = this;
         edit.id = $stateParams.id;
         edit.session = {};
 
         function fetch(id) {
             SessionsModel.fetch(id)
-                .then( (result) => {
+                .then( function(result) {
                     edit.session = result;
                     console.debug('r:', result);
                 });
@@ -85,7 +85,7 @@ angular.module('RTPoll.controllers', [])
         function update(object) {
             console.debug('update: ', object);
             SessionsModel.update(object.id, object)
-                .then( (result) => {
+                .then( function(result) {
                     $ionicHistory.goBack();
                 });
         }
@@ -99,7 +99,7 @@ angular.module('RTPoll.controllers', [])
     })
 
     .controller('PollCtrl', function (SessionsModel, QuestionsModel, PollModel, AnswersModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup, $q) {
-        let poll = this;
+        var poll = this;
         poll.id = $stateParams.session_id;
         poll.session = {};
         poll.current_question_index = 0;
@@ -119,10 +119,10 @@ angular.module('RTPoll.controllers', [])
         });
 
         function updateAnswerCount() {
-            AnswersModel.all(poll.id).then( (result) => {
+            AnswersModel.all(poll.id).then( function(result) {
                 console.debug('answer result:', result);
-                let counts = {};
-                angular.forEach(result.data.data, (answer) => {
+                var counts = {};
+                angular.forEach(result.data.data, function(answer) {
                     //console.debug('a',answer);
                     if (!counts.hasOwnProperty(answer.question_id)){
                         counts[answer.question_id] = {};    
@@ -143,22 +143,22 @@ angular.module('RTPoll.controllers', [])
 
         function fetch(id) {
             SessionsModel.fetch(id)
-                .then( (result) => {
+                .then( function(result) {
                     poll.session = result;
                     //console.debug('s:', result);
                 });
 
             QuestionsModel.all(id)
-                .then( (result) => {
+                .then( function(result) {
                     poll.question = result;
-                    angular.forEach(poll.question.data.data, (item) => {
+                    angular.forEach(poll.question.data.data, function(item) {
                         item.answer_array = angular.fromJson(item.answers);
                     });
                     console.debug('q:', poll);
                 });
 
             PollModel.fetch(id)
-                .then( (result) => {
+                .then( function(result) {
                     poll.session = result;
                     //console.debug('p:', result);
                 });
@@ -168,25 +168,25 @@ angular.module('RTPoll.controllers', [])
         function startOver(){
             console.debug('start over', poll.id);
             PollModel.fetch(poll.id)
-                .then((result) => {
+                .then(function(result) {
                     //console.debug('lookup:', result);
-                    let new_object = {poll_id: poll.id, poll_index: 1};
+                    var new_object = {poll_id: poll.id, poll_index: 1};
                     if(result.data.data.length == 0){ // does not exist, create                
                         console.debug('does not exist, create', new_object);
                         PollModel.create(new_object)
-                            .then( (result) => {
+                            .then( function(result) {
                                 // poll.session = result;
                                 //console.debug('created:', result);
                             });
                     }else{
                         //console.debug('exists, update', result.data.data[0].id, new_object);
                         PollModel.update(result.data.data[0].id, new_object)
-                            .then( (updateResult) => {
+                            .then( function(updateResult) {
                                 // poll.session = result;
-                                let delete_requests = [];
+                                var delete_requests = [];
                                 
-                                AnswersModel.all(poll.id).then( (result) => {
-                                    angular.forEach(result.data.data, (answer) => {
+                                AnswersModel.all(poll.id).then( function(result) {
+                                    angular.forEach(result.data.data, function(answer) {
                                         delete_requests.push(AnswersModel.delete(answer.id));
                                     });
                                     $q.all(delete_requests).then(function (results) {
@@ -203,31 +203,31 @@ angular.module('RTPoll.controllers', [])
         }
 
         function answerQuestion(question_id){
-            let object = {
+            var object = {
                 answer: poll.answer_index, question_id: question_id, session_id: poll.id
             };
             AnswersModel.create(object)
-                .then( (result) => {
+                .then( function(result) {
                     console.debug('answered question');      
             });
         }
 
         function nextQuestion(){
             PollModel.fetch(poll.id)
-                .then( (result) => {
-                    let pollStatus = result.data.data[0];
-                    let poll_index = Number(pollStatus.poll_index);
+                .then( function(result) {
+                    var pollStatus = result.data.data[0];
+                    var poll_index = Number(pollStatus.poll_index);
                     console.debug('current question: ', poll_index);
-                    let questionCount = poll.question.data.data.length;
+                    var questionCount = poll.question.data.data.length;
                     if (questionCount < poll_index + 1){
                         console.debug('no more questions to show');
                     }else{
-                        let new_object = result.data.data[0];
+                        var new_object = result.data.data[0];
                         new_object.poll_index = Number(new_object.poll_index) + 1;
                         console.debug('update with:', new_object);   
 
                         PollModel.update(result.data.data[0].id, new_object)
-                            .then( (result) => {                                
+                            .then( function(result) {                                
                                 poll.current_question_index = Number(new_object.poll_index);                              
                                 console.debug('successfully updated to: ', poll.current_question_index,result);
                         });  
@@ -243,7 +243,7 @@ angular.module('RTPoll.controllers', [])
         function update(object) {
             console.debug('update: ', object);
             SessionsModel.update(object.id, object)
-                .then( (result) => {
+                .then( function(result) {
                     $ionicHistory.goBack();
                 });
         }
@@ -261,12 +261,12 @@ angular.module('RTPoll.controllers', [])
     })
 
     .controller('EditQuestionCtrl', function (QuestionsModel, $stateParams, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
-        let edit = this;
+        var edit = this;
         edit.id = $stateParams.id;
         edit.session = {};
         function fetch(id) {
             QuestionsModel.fetch(id)
-                .then( (result) => {
+                .then( function(result) {
                     edit.question = result;
                     result.data.answer_array = angular.fromJson(result.data.answers);
                     console.debug('r:', result);
@@ -277,7 +277,7 @@ angular.module('RTPoll.controllers', [])
             object.answers = angular.toJson(object.answer_array);
             console.debug('update: ', object);
             QuestionsModel.update(object.id, object)
-                .then( (result) => {
+                .then( function(result) {
                     $ionicHistory.goBack();
                 });
         }
@@ -297,7 +297,7 @@ angular.module('RTPoll.controllers', [])
     })
 
     .controller('SessionCtrl', function (SessionsModel, PollModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup) {
-        let session = this;
+        var session = this;
 
         $scope.$on("$ionicView.enter", function () {
             getAll();
@@ -306,7 +306,7 @@ angular.module('RTPoll.controllers', [])
         function updateSessions() {
             console.debug('updating session list');
             getData()
-                .then( (result) => {
+                .then( function(result) {
                     session.data = result.data.data;
                     console.debug('r:', result)
                     $scope.$broadcast('scroll.refreshComplete');
@@ -364,7 +364,7 @@ angular.module('RTPoll.controllers', [])
 
         function getAll() {
             SessionsModel.all()
-                .then( (result) => {
+                .then( function(result) {
                     session.data = result.data.data;
                 });
         }
@@ -375,15 +375,15 @@ angular.module('RTPoll.controllers', [])
 
         function create(object) {
             SessionsModel.create(object)
-                .then( (result) => {
+                .then( function(result) {
                     getAll();
 
-                    let alertPopup = $ionicPopup.alert({
+                    var alertPopup = $ionicPopup.alert({
                         title: 'Session Created',
                         template: 'Name: ' + object.name
                     });
 
-                    alertPopup.then((res) => {
+                    alertPopup.then( function(res) {
                         $ionicHistory.goBack();
                     });
                 });
@@ -398,7 +398,7 @@ angular.module('RTPoll.controllers', [])
             confirmPopup.then(function(res) {
               if(res) {
                 SessionsModel.delete(id)
-                .then( (result) => {
+                .then( function(result) {
                     console.debug(result);
                     getAll();
                 });                              
@@ -445,8 +445,8 @@ angular.module('RTPoll.controllers', [])
     })
 
     .controller('QuestionCtrl', function (QuestionsModel, $rootScope, Backand, $scope, $ionicHistory, $state, $ionicPopup, $stateParams) {
-        let question = this;
-        let session_id = $stateParams.session_id;
+        var question = this;
+        var session_id = $stateParams.session_id;
 
         $scope.$on("$ionicView.enter", function () {
             session_id = $stateParams.session_id;
@@ -458,7 +458,7 @@ angular.module('RTPoll.controllers', [])
         function updateQuestions() {
             console.debug('updating question list');
             getData()
-                .then( (result) => {
+                .then( function(result) {
 //                    angular.forEach(result.data.data, (question) => {
 //                        question.answer_array = angular.fromJson(question.answers);
 //                        console.debug('set array: ', question.answer_array);
@@ -497,11 +497,11 @@ angular.module('RTPoll.controllers', [])
 
         function getAll() {
             QuestionsModel.all(session_id)
-                .then( (result) => {
+                .then( function(result) {
                     console.debug('got question data back: ', result);
                     question.data = result.data.data;
-                    angular.forEach(question.data, (q) => {   
-                        angular.forEach(result.data.data, (question) => {
+                    angular.forEach(question.data, function(q) {   
+                        angular.forEach(result.data.data, function(question) {
                             question.answer_array = angular.fromJson(question.answers);
                         });
                         //console.debug('q:', q);
@@ -519,14 +519,14 @@ angular.module('RTPoll.controllers', [])
             
             console.debug('create question: ', object);
             QuestionsModel.create(object)
-                .then( (result) => {
+                .then( function(result) {
                     getAll();
-                    let alertPopup = $ionicPopup.alert({
+                    var alertPopup = $ionicPopup.alert({
                         title: 'Question Created',
                         template: 'Name: ' + object.question
                     });
 
-                    alertPopup.then((res) => {
+                    alertPopup.then(function(res) {
                         $ionicHistory.goBack();
                     });
                 });
@@ -534,7 +534,7 @@ angular.module('RTPoll.controllers', [])
 
         function deleteObject(id) {
             QuestionsModel.delete(id)
-                .then( (result) => {
+                .then( function(result) {
                     console.debug(result);
                     getAll();
                 });
